@@ -1,3 +1,8 @@
+/********************************************************/
+/*      file name:fl10802_fwvga_dsi_vdo.c               */
+/*      By @KosBeg for S-TELL M477                      */
+/********************************************************/
+
 #ifdef BUILD_LK
 #include <stdio.h>
 #include <string.h>
@@ -34,15 +39,15 @@ static LCM_UTIL_FUNCS lcm_util;
 #define read_reg											lcm_util.dsi_read_reg()
 #define read_reg_v2(cmd, buffer, buffer_size)   			lcm_util.dsi_dcs_read_lcm_reg_v2(cmd, buffer, buffer_size)
 
-struct LCM_setting_table {
-    unsigned cmd;
-    unsigned char count;
-    unsigned char para_list[64];
-};
-
 // ---------------------------------------------------------------------------
 //  LCM Driver Implementations
 // ---------------------------------------------------------------------------
+static struct LCM_setting_table {
+  unsigned char cmd;
+  unsigned char count;
+  unsigned char para_list[64];
+};
+
 static void push_table(struct LCM_setting_table *table, unsigned int count, unsigned char force_update) {
   unsigned int i;
   for(i = 0; i < count; i++) {
@@ -181,41 +186,15 @@ static unsigned int lcm_compare_id(void) {
 */
 };
 
-static void lcm_update(unsigned int x, unsigned int y,
-                       unsigned int width, unsigned int height)
-{
-	unsigned int x0 = x;
-	unsigned int y0 = y;
-	unsigned int x1 = x0 + width - 1;
-	unsigned int y1 = y0 + height - 1;
+static void lcm_setbacklight(unsigned int level) {
+  unsigned int data_array[16];
 
-	unsigned char x0_MSB = ((x0>>8)&0xFF);
-	unsigned char x0_LSB = (x0&0xFF);
-	unsigned char x1_MSB = ((x1>>8)&0xFF);
-	unsigned char x1_LSB = (x1&0xFF);
-	unsigned char y0_MSB = ((y0>>8)&0xFF);
-	unsigned char y0_LSB = (y0&0xFF);
-	unsigned char y1_MSB = ((y1>>8)&0xFF);
-	unsigned char y1_LSB = (y1&0xFF);
+  if (level > 255)
+    level = 255;
 
-	unsigned int data_array[16];
-
-#ifdef BUILD_LK
-	printf("uboot %s\n", __func__);
-#else
-	printk("kernel %s\n", __func__);
-#endif
-
-	data_array[0]= 0x00053902;
-	data_array[1]= (x1_MSB<<24)|(x0_LSB<<16)|(x0_MSB<<8)|0x2a;
-	data_array[2]= (x1_LSB);
-	data_array[3]= 0x00053902;
-	data_array[4]= (y1_MSB<<24)|(y0_LSB<<16)|(y0_MSB<<8)|0x2b;
-	data_array[5]= (y1_LSB);
-	data_array[6]= 0x002c3909;
-
-	dsi_set_cmdq(data_array, 7, 0);
-
+  data_array[0]= 0x00023902;
+  data_array[1] =(0x51|(level<<8));
+  dsi_set_cmdq(data_array, 2, 1);
 };
 
 // ---------------------------------------------------------------------------
@@ -229,6 +208,6 @@ LCM_DRIVER fl10802_fwvga_dsi_vdo_lcm_drv =
     .init           = lcm_init,
     .suspend        = lcm_suspend,
     .resume         = lcm_resume,
+    .set_backlight  = lcm_setbacklight,
     .compare_id     = lcm_compare_id,
-    .update         = lcm_update,
 };
