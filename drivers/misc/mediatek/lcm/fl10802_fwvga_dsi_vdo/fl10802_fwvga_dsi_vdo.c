@@ -1,8 +1,3 @@
-/********************************************************/
-/*      file name:fl10802_fwvga_dsi_vdo.c               */
-/*      By @KosBeg for S-TELL M477                      */
-/********************************************************/
-
 #ifdef BUILD_LK
 #include <stdio.h>
 #include <string.h>
