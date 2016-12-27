@@ -86,7 +86,7 @@ extern LCM_DRIVER cm_n070ice_dsi_vdo_lcm_drv;
 extern LCM_DRIVER ej101ia_lcm_drv;
 extern LCM_DRIVER scf0700m48ggu02_lcm_drv;
 extern LCM_DRIVER nt35510_fwvga_lcm_drv;
-extern LCM_DRIVER fl10802_fwvga_dsi_vdo;
+extern LCM_DRIVER fl10802_fwvga_dsi_vdo_lcm_drv;
 #if defined(GN_SSD2825_SMD_S6E8AA)
 extern LCM_DRIVER gn_ssd2825_smd_s6e8aa;
 #endif
@@ -654,7 +654,7 @@ LCM_DRIVER* lcm_driver_list[] =
 #endif 
 
 #if defined(fl10802_fwvga_dsi_vdo)
-  &fl10802_fwvga_dsi_vdo,
+  &fl10802_fwvga_dsi_vdo_lcm_drv,
 #endif 
 
 #if defined(HX8392A_DSI_CMD_3LANE)
